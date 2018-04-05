@@ -148,7 +148,7 @@ class WeChatDriverTest extends PHPUnit_Framework_TestCase
 <Content><![CDATA[foo]]></Content>
 <MsgId>1234567890</MsgId>
 </xml>');
-        $this->assertSame('from_user_name', $driver->getMessages()[0]->getSender());
+        $this->assertSame('from_user_name', $driver->getMessages()[0]->getRecipient());
     }
 
     /** @test */
@@ -161,7 +161,7 @@ class WeChatDriverTest extends PHPUnit_Framework_TestCase
 <Content><![CDATA[foo]]></Content>
 <MsgId>1234567890</MsgId>
 </xml>');
-        $this->assertSame('to_user_name', $driver->getMessages()[0]->getRecipient());
+        $this->assertSame('from_user_name', $driver->getMessages()[0]->getRecipient());
     }
 
     /** @test */
@@ -474,7 +474,7 @@ class WeChatDriverTest extends PHPUnit_Framework_TestCase
 
         $html->shouldReceive('post')
             ->once()
-            ->with('https://api.wechat.com/cgi-bin/user/info?access_token=SECRET_TOKEN&openid=to_user_name&lang=en_US', [], [], [], true)
+            ->with('https://api.wechat.com/cgi-bin/user/info?access_token=SECRET_TOKEN&openid=from_user_name&lang=en_US', [], [], [], true)
             ->andReturn(new Response('{
             "subscribe": 1, 
             "openid": "o6_bmjrPTlm6_2sgVt7hMZOPfL2M", 
