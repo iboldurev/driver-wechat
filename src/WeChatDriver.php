@@ -36,7 +36,10 @@ class WeChatDriver extends HttpDriver implements VerifiesService
         $this->payload = $request->request->all();
         $this->event = Collection::make($data);
         $this->config = Collection::make($this->config->get('wechat'));
-        Response::create()->send();
+
+        if ($this->matchesRequest()) {
+            Response::create()->send();
+        }
     }
 
     /**
@@ -74,8 +77,11 @@ class WeChatDriver extends HttpDriver implements VerifiesService
         }
 
         $nickname = isset($responseData->nickname) ? $responseData->nickname : '';
+        $names = explode(' ', $nickname, 2);
+        $firstName = isset($names[0]) ? $names[0] : null;
+        $lastName = isset($names[1]) ? $names[1] : null;
 
-        return new User($matchingMessage->getSender(), null, null, $nickname, $responseData);
+        return new User($matchingMessage->getRecipient(), $firstName, $lastName, $nickname, $responseData);
     }
 
     /**
@@ -92,8 +98,8 @@ class WeChatDriver extends HttpDriver implements VerifiesService
         }
 
         return [
-            new IncomingMessage($text, $this->event->get('FromUserName'),
-                $this->event->get('ToUserName'), $this->event),
+            new IncomingMessage($text, $this->event->get('ToUserName'),
+                $this->event->get('FromUserName'), $this->event),
         ];
     }
 
@@ -127,7 +133,7 @@ class WeChatDriver extends HttpDriver implements VerifiesService
     public function buildServicePayload($message, $matchingMessage, $additionalParameters = [])
     {
         $parameters = array_merge_recursive([
-            'touser' => $matchingMessage->getSender(),
+            'touser' => $matchingMessage->getRecipient(),
             'msgtype' => 'text',
         ], $additionalParameters);
 
