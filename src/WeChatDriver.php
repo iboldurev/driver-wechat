@@ -68,7 +68,7 @@ class WeChatDriver extends HttpDriver implements VerifiesService
      */
     public function getUser(IncomingMessage $matchingMessage)
     {
-        $response = $this->http->post('https://api.wechat.com/cgi-bin/user/info?access_token='.$this->getAccessToken().'&openid='.$matchingMessage->getRecipient().'&lang=en_US',
+        $response = $this->http->post('https://api.weixin.qq.com/cgi-bin/user/info?access_token='.$this->getAccessToken().'&openid='.$matchingMessage->getRecipient().'&lang=en_US',
             [], [], [], true);
         $responseData = json_decode($response->getContent());
 
@@ -116,7 +116,7 @@ class WeChatDriver extends HttpDriver implements VerifiesService
      */
     protected function getAccessToken()
     {
-        $response = $this->http->post('https://api.wechat.com/cgi-bin/token?grant_type=client_credential&appid='.$this->config->get('app_id').'&secret='.$this->config->get('app_key'),
+        $response = $this->http->post('https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid='.$this->config->get('app_id').'&secret='.$this->config->get('app_key'),
             [], []);
         $responseData = json_decode($response->getContent());
 
@@ -179,7 +179,7 @@ class WeChatDriver extends HttpDriver implements VerifiesService
      */
     public function sendPayload($payload)
     {
-        return $this->http->post('https://api.wechat.com/cgi-bin/message/custom/send?access_token='.$this->getAccessToken(),
+        return $this->http->post('https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token='.$this->getAccessToken(),
             [], $payload, [], true);
     }
 
@@ -201,7 +201,7 @@ class WeChatDriver extends HttpDriver implements VerifiesService
      */
     public function sendRequest($endpoint, array $parameters, IncomingMessage $matchingMessage)
     {
-        return $this->http->post('https://api.wechat.com/cgi-bin/'.$endpoint.'?access_token='.$this->getAccessToken(),
+        return $this->http->post('https://api.weixin.qq.com/cgi-bin/'.$endpoint.'?access_token='.$this->getAccessToken(),
             [], $parameters, [], true);
     }
 
