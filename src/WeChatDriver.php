@@ -11,6 +11,7 @@ use BotMan\BotMan\Messages\Attachments\Image;
 use BotMan\BotMan\Messages\Outgoing\Question;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use BotMan\Drivers\WeChat\Extensions\NewsTemplate;
 use BotMan\BotMan\Messages\Incoming\IncomingMessage;
 use BotMan\BotMan\Messages\Outgoing\OutgoingMessage;
 use BotMan\Drivers\WeChat\Exceptions\WeChatException;
@@ -19,6 +20,11 @@ use BotMan\Drivers\WeChat\Exceptions\UnsupportedAttachmentException;
 class WeChatDriver extends HttpDriver implements VerifiesService
 {
     const DRIVER_NAME = 'WeChat';
+
+    /** @var array */
+    protected $templates = [
+        NewsTemplate::class,
+    ];
 
     /**
      * @param Request $request
@@ -141,6 +147,8 @@ class WeChatDriver extends HttpDriver implements VerifiesService
             $parameters['text'] = [
                 'content' => $message->getText(),
             ];
+        } elseif (is_object($message) && in_array(get_class($message), $this->templates)) {
+            $parameters = array_merge($parameters, $message->toArray());
         } elseif ($message instanceof OutgoingMessage) {
             $attachment = $message->getAttachment();
 
