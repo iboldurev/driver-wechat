@@ -180,7 +180,7 @@ class WeChatDriver extends HttpDriver implements VerifiesService
     public function sendPayload($payload)
     {
         return $this->http->post('https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token='.$this->getAccessToken(),
-            [], $payload, [], true);
+            [], $payload, ['Content-Type' => 'application/json'], true);
     }
 
     /**
